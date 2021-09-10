@@ -1,0 +1,12 @@
+{% extends "layout.html" %}
+
+{% block main %}
+
+    <h6>Search Results:</h6>
+    <div class="list-group list-group-flush">
+        {% for school in results %}
+            <a href="/college/{{ school }}" class="list-group-item list-group-item-action text-primary"><h5>{{ school }}</h5></a>
+        {% endfor %}
+    </div>
+
+{% endblock %}

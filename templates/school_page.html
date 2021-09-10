@@ -1,0 +1,266 @@
+{% extends "layout.html" %}
+
+{% block main %}
+        <h1>{{ college.name }}</h1>
+        <div>
+            <div class="row">
+                <div class="ml-3">
+                    <h5>{{ college.location }}</h5>
+                </div>
+                <div class="ml-auto">
+                    <h5>{{ college.inst_type}} Institution in {{ college.locale }} Area</h5>
+                    <h5>{{ college.prog_len }} Bachelor's Program</h5>
+                </div>
+            </div>
+        </div>
+        <br>
+        <div class="card">
+            <div class="card-header">
+                <h3>Admission</h3>
+            </div>
+            <div class="card-body">
+                <dl class="dl-split-sm dl-split-sm--light">
+                    <dt>Application Deadlines</dt>
+                    <dd>{% autoescape false %} {{ college.appl_dl | replace("\n", "<br/>") }} {% endautoescape %}</dd>
+                    <dt>Financial Considerations</dt>
+                    <dd>{{ college.fin_on_adm }}</dd>
+                </dl>
+                <h5>Admission Statistics</h5>
+                <dl class="dl-split-sm dl-split-sm--light">
+                    <dt>Admission Rate</dt>
+                    <dd>{% autoescape false %} {{ college.adm_rate | replace("\n", "<br/>") }} {% endautoescape %}</dd>
+                    <dt>Total Applicants</dt>
+                    <dd>{{ college.tot_appl }}</dd>
+                    <dt>Total Admitted</dt>
+                    <dd>{{ college.tot_adm }}</dd>
+                </dl>
+                <h5>Standardized Testing</h5>
+                <dl class="dl-split-sm dl-split-sm--light">
+                    <dt>Standardized Testing</dt>
+                    <dd>SAT/ACT: {{ college.stand_test['SAT or ACT'] }} <br>
+                        SAT Subject Test: {{ college.stand_test['SAT Subject Test'] }}
+                    </dd>
+                    <dt>SAT/ACT Submission %</dt>
+                    <dd>{% autoescape false %} {{ college.stand_test_sub | replace("\n", "<br/>") }} {% endautoescape %}</dd>
+                    <dt>SAT Mid-Range</dt>
+                    <dd>{{ college.sat_mid_range }}</dd>
+                    <dt>ACT Mid-Range</dt>
+                    <dd>{{ college.act_mid_range }}</dd>
+                </dl>
+                <h5>Other Application Requirements</h5>
+                <dl class="dl-split-sm dl-split-sm--light">
+                    <dt>Interview</dt>
+                    <dd>{{ college.interview }}</dd>
+                </dl>
+            </div>
+        </div>
+        <br>
+        <div class="card">
+            <div class="card-header">
+                <h3>Costs</h3>
+            </div>
+            <div class="card-body">
+                <dl class="dl-split-sm dl-split-sm--light">
+                    <dt>Average Cost</dt>
+                    <dd>${{ college.avg_cost }}</dd>
+                    <dt>Median Debt at Completion</dt>
+                    <dd>${{ college.med_post_grad_debt }}</dd>
+                    <dt>Payment Plans</dt>
+                    <dd>${{ college.avg_cost }}</dd>
+                </dl>
+                <h5>Cost of Attendance</h5>
+                <dl class="dl-split-sm dl-split-sm--light">
+                    <dt>Full Cost</dt>
+                    <dd>{{ college.full_cost['Cost of Attendance'] }}</dd>
+                    <dt>Tuition and Fees</dt>
+                    <dd>{{ college.full_cost['Tuition and Fees'] }}</dd>
+                    <dt>Room and Board</dt>
+                    <dd>{{ college.full_cost['Room and Board'] }}</dd>
+                    <dt>Books and Supplies</dt>
+                    <dd>{{ college.full_cost['Books and Supplies'] }}</dd>
+                    <dt>Other Expenses</dt>
+                    <dd>{{ college.full_cost['Other Expenses'] }}</dd>
+                </dl>
+                <h5>Average Cost by Income</h5>
+                <dl class="dl-split-sm dl-split-sm--light">
+                    <dt>Income 0-30k</dt>
+                    <dd>${{ college.ac_to_inc['Income 0-30k'] }}</dd>
+                    <dt>Income 30k-48k</dt>
+                    <dd>${{ college.ac_to_inc['Income 30k-48k'] }}</dd>
+                    <dt>Income 48k-75k</dt>
+                    <dd>${{ college.ac_to_inc['Income 48k-75k'] }}</dd>
+                    <dt>Income 75k-110k</dt>
+                    <dd>${{ college.ac_to_inc['Income 75k-110k'] }}</dd>
+                    <dt>Income 110k+</dt>
+                    <dd>${{ college.ac_to_inc['Income 110k+'] }}</dd>
+                </dl>
+                <h5>Financial Aid Programs</h5>
+                <dl class="dl-split-sm dl-split-sm--light">
+                    <dt>Federal Loans</dt>
+                    <dd>{{ college.aid['Loans']['Federal Loans'] }}</dd>
+                    <dt>State Loans</dt>
+                    <dd>{{ college.aid['Loans']['State Loans'] }}</dd>
+                    <dt>Other Loans</dt>
+                    <dd>{{ college.aid['Loans']['Other Loans'] }}</dd>
+                    <dt>Need-Based Scholarships/Grants</dt>
+                    <dd>{{ college.aid['Scholarships and Grants']['Need-Based Available'] }}</dd>
+                    <dt>Non-Need-Based Scholarships/Grants</dt>
+                    <dd>{{ college.aid['Scholarships and Grants']['Non-Need–Based Available'] }}</dd>
+                    <dt>Academic Interest/Achievement Award Areas</dt>
+                    <dd>
+                        {{ college.aid['Non-Need Awards']['Academic Interest/Achievement Award Areas'] }}
+                    </dd>
+                    <dt>Creative Arts/Performance Award Areas</dt>
+                    <dd>
+                        {{ college.aid['Non-Need Awards']['Creative Arts/Performance Award Areas'] }}
+                    </dd>
+                    <dt>Special Achievements/Activities Award Areas</dt>
+                    <dd>
+                        {{ college.aid['Non-Need Awards']['Special Achievements/Activities Award Areas'] }}
+                    </dd>
+                    <dt>Special Characteristics Award Areas</dt>
+                    <dd>
+                        {{ college.aid['Non-Need Awards']['Special Characteristics Award Areas'] }}
+                    </dd>
+                </dl>
+            </div>
+        </div>
+        <br>
+        <div class="card">
+            <div class="card-header">
+                <h3>Demographics</h3>
+            </div>
+            <div class="card-body">
+                <dl class="dl-split-sm dl-split-sm--light">
+                    <dt>Undergraduate Population</dt>
+                    <dd>{{ college.tot_population }}</dd>
+                    <dt>Class Population</dt>
+                    <dd>{{ college.class_population }}</dd>
+                    <dt>International Students</dt>
+                    <dd>{{ college.international_pct }}</dd>
+                    <dt>Student to Faculty Ratio</dt>
+                    <dd>{{ college.stu_to_fac }}</dd>
+                </dl>
+                <h5>Gender Breakdown</h5>
+                <dl class="dl-split-sm dl-split-sm--light">
+                    <dt>Male</dt>
+                    <dd>{{ college.gender_pct['M'] }}%</dd>
+                    <dt>Female</dt>
+                    <dd>{{ college.gender_pct['F'] }}%</dd>
+                </dl>
+                <h5>Ethnicity Breakdown</h5>
+                <dl class="dl-split-sm dl-split-sm--light">
+                    <dt>White</dt>
+                    <dd>{{ college.ethnicity_pct['White'] }}%</dd>
+                    <dt>Black</dt>
+                    <dd>{{ college.ethnicity_pct['Black'] }}%</dd>
+                    <dt>Hispanic</dt>
+                    <dd>{{ college.ethnicity_pct['Hispanic'] }}%</dd>
+                    <dt>Asian</dt>
+                    <dd>{{ college.ethnicity_pct['Asian'] }}%</dd>
+                    <dt>American Indian/Alaska Native</dt>
+                    <dd>{{ college.ethnicity_pct['American Indian/Alaska Native'] }}%</dd>
+                    <dt>Native Hawaiian/Pacific Islander</dt>
+                    <dd>{{ college.ethnicity_pct['Native Hawaiian/Pacific Islander'] }}%</dd>
+                    <dt>Multi-Race</dt>
+                    <dd>{{ college.ethnicity_pct['Multi-Race'] }}%</dd>
+                    <dt>Unknown</dt>
+                    <dd>{{ college.ethnicity_pct['Unknown'] }}%</dd>
+                </dl>
+                <h5>Social Economic Breakdown</h5>
+                <dl class="dl-split-sm dl-split-sm--light">
+                    <dt>Family Income 0-30k</dt>
+                    <dd>{{ college.social_econ_pct['Family Income 0-30k'] }}</dd>
+                    <dt>Family Income 30k-48k</dt>
+                    <dd>{{ college.social_econ_pct['Family Income 30k-48k'] }}</dd>
+                    <dt>Family Income 48k-75k</dt>
+                    <dd>{{ college.social_econ_pct['Family Income 48k-75k'] }}</dd>
+                    <dt>Family Income 75k-110k</dt>
+                    <dd>{{ college.social_econ_pct['Family Income 75k-110k'] }}</dd>
+                    <dt>Family Income 110k+</dt>
+                    <dd>{{ college.social_econ_pct['Family Income 110k+'] }}</dd>
+                </dl>
+            </div>
+        </div>
+        <br>
+        <div class="card">
+            <div class="card-header">
+                <h3>Campus Life</h3>
+            </div>
+            <div class="card-body">
+                <dl class="dl-split-sm dl-split-sm--light">
+                    <dt>Weather</dt>
+                    <dd>{{ college.weather }}</dd>
+                </dl>
+                <h5>Residence</h5>
+                <dl class="dl-split-sm dl-split-sm--light">
+                    <dt>Percentage Living in Residence</dt>
+                    <dd>{{ college.res_pct }}</dd>
+                    <dt>Residence Requirement</dt>
+                    <dd>{{ college.res_rqd }}</dd>
+                </dl>
+                <h5>Sports</h5>
+                <dl class="dl-split-sm dl-split-sm--light">
+                    <dt>Male</dt>
+                    <dd>{{ college.sports_teams["Men's Sports"] }}</dd>
+                    <dt>Female</dt>
+                    <dd>{{ college.sports_teams["Women's Sports"] }}</dd>
+                </dl>
+                {# <h5>Clubs</h5>
+                <dl class="dl-split-sm dl-split-sm--light">
+                    <dt>Popular Clubs</dt>
+                    <dd>{{ college.clubs }}</dd>
+                </dl> #}
+                <h5>Personal Support Services</h5>
+                <dl class="dl-split-sm dl-split-sm--light">
+                    <dt>Health Service</dt>
+                    <dd>{{ college.personal_care['Health Service'] }}</dd>
+                    <dt>Personal Counseling</dt>
+                    <dd>{{ college.personal_care['Personal Counseling'] }}</dd>
+                    <dt>Child Care</dt>
+                    <dd>{{ college.personal_care['Child Care'] }}</dd>
+                </dl>
+            </div>
+        </div>
+        <br>
+        <div class="card">
+            <div class="card-header">
+                <h3>Graduation Outcomes</h3>
+            </div>
+            <div class="card-body">
+                <dl class="dl-split-sm dl-split-sm--light">
+                    <dt>Outcomes</dt>
+                    <dd>{{ college.outcomes }}</dd>
+                    <dt>Average Full Time Salary</dt>
+                    <dd>{{ college.avg_ft_salary }}</dd>
+                    <dt>Top Employers</dt>
+                    <dd>{{ college.top_employers }}</dd>
+                    <dt>Top Employment Sectors</dt>
+                    <dd>{{ college.top_sectors }}</dd>
+                </dl>
+            </div>
+        </div>
+        <br>
+        <div class="card">
+            <div class="card-header">
+                <h3>Fields of Study</h3>
+            </div>
+            <div class="card-body">
+                <dl class="dl-split-sm dl-split-sm--light">
+                    <dt>Special Programs</dt>
+                    <dd>{{ college.spec_prog }}</dd>
+                </dl>
+                <h5>Academic Support Services</h5>
+                <dl class="dl-split-sm dl-split-sm--light">
+                    <dt>Remedial Instruction</dt>
+                    <dd>{{ college.acad_supp['Remedial Instruction'] }}</dd>
+                    <dt>Tutoring</dt>
+                    <dd>{{ college.acad_supp['Tutoring'] }}</dd>
+                    <dt>Services for Learning Disabled Students</dt>
+                    <dd>{{ college.acad_supp['Services for Learning Disabled Students'] }}</dd>
+                    <dt>Services for Physically Disabled Students</dt>
+                    <dd>{{ college.acad_supp['Services for Physically Disabled Students'] }}</dd>
+                </dl>
+            </div>
+        </div>
+{% endblock %}

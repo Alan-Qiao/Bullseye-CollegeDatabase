@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+        <!-- CSS -->
+        <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css" integrity="sha384-MCw98/SFnGE8fJT3GXwEOngsV7Zt27NXFoaoApmYm81iuXoPkFOJwJ8ERdknLPMO" crossorigin="anonymous">
+        <link rel="stylesheet" type="text/css" href="/static/styles.css">
+        <style>
+            .dl-split-sm:after{
+                content:"";
+                display:table;
+                clear:both
+            }
+
+            .dl-split-sm>dt{
+                padding-top:.5rem;
+                border-top:solid 1px rgba(0,0,0,.12)
+            }
+
+            .dl-split-sm>dt:first-of-type{
+                border-color:#494949
+            }
+
+            @media only screen and (min-width:576px){
+                .dl-split-sm>*{
+                    display:inline-block;
+                    float:left;
+                    padding-top:.5rem;
+                    border-top:solid 1px rgba(0,0,0,.12)
+                 }
+                .dl-split-sm>dt{
+                    width:33%;
+                    font-weight:500;
+                    color:rgba(0,0,0,.8)
+                    padding-right:15px
+                }.dl-split-sm>dd{
+                    width:67%;
+                    font-weight:400;
+                    padding-left:15px
+                }
+                .dl-split-sm>dd:first-of-type{
+                    border-color:#494949
+                }
+            }
+
+            .dl-split-sm--light>dt:first-of-type{
+                border-color:rgba(0,0,0,.12)
+            }
+
+            @media only screen and (min-width:576px){
+                .dl-split-sm--light>dd:first-of-type{
+                    border-color:rgba(0,0,0,.12)
+                }
+            }
+
+            @media only screen and (min-width:576px){
+                .dl-split-sm__indent{
+                    padding-left:12px
+                }
+            }
+        </style>
+
+        <!-- JS, Popper.js, jQuery -->
+        <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.3/umd/popper.min.js" integrity="sha384-ZMP7rVo3mIykV+2+9J3UJ46jBk0WLaUAdn689aCwoqbBJiSnjAK/l8WvCWPIPm49" crossorigin="anonymous"></script>
+        <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/js/bootstrap.min.js" integrity="sha384-ChfqqxuZUCnJSK3+MXmPNIyE6ZbWh2IMqE241rYiqJxyMiZ6OW/JmZQ5stwEULTy" crossorigin="anonymous"></script>
+
+        <script type="text/javascript" src="/static/scripts.js"></script>
+
+        <link rel="shortcut icon" href="{{ url_for('static', filename='favicon.ico') }}">
+    <title>CollegeAdvisor College Database</title>
+</head>
+<body>
+    <nav class="navbar navbar-expand-lg navbar-light bg-light border">
+        <a class="navbar-brand" href="/">
+            <img src="/static/logo.png" alt="CollegeAdvisor College Database" style="width: 250px; height: 40px">
+        </a>
+        <button aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation" class="navbar-toggler" data-target="#navbar" data-toggle="collapse" type="button">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbar">
+            <ul class="navbar-nav mr-5 mt-2">
+                <li class="nav-item"><a class="nav-link" href="/">Home</a></li>
+            </ul>
+            <form action="\search" method="POST" name="finder">
+                <ul class="navbar-nav ml-5 mt-2">
+                    <li class="col-lg-10">
+                        <input class="form-control" style="width:600px;" type="text" name="find" placeholder="Search College">
+                    </li>
+                    <li class="col-lg-auto">
+                        <button class="btn btn-success" type="submit">Search</button>
+                    </li>
+                </ul>
+            </form>
+        </div>
+    </nav>
+    {% if get_flashed_messages() %}
+        <header>
+            <div class="alert alert-danger border text-center" role="alert">
+                {{ get_flashed_messages() | join(" ")}}
+            </div>
+        </header>
+    {% endif %}
+    <main class="container-fluid pt-5 pl-5 pr-5 pb-5">
+        {% block main %}{% endblock %}
+    </main>
+
+    <footer class="small text-center text-muted">
+        CollegeAdvisor Colleges Database
+    </footer>
+</body>
+</html>

@@ -1,0 +1,46 @@
+p {
+    margin: 0px;
+}
+
+.card {
+    margin-right: 10px;
+}
+
+.textbox {
+    width: auto;
+}
+
+.centeronpage {
+    margin: 0 auto;
+    text-align: center;
+}
+
+.pullbottom {
+    display: inline-block;
+    vertical-align: bottom;
+    float: none;
+}
+
+.category, .total {
+    font-weight: bold;
+}
+
+.margin {
+    margin-bottom: 18px;
+}
+
+.smallMargin {
+    margin-bottom: 12px;
+}
+
+.table-wrapper-scroll-y {
+    display: block;
+    max-height: 460px;
+    overflow-y: auto;
+    -ms-overflow-style: -ms-autohiding-scrollbar;
+}
+
+.theader {
+    margin-top: 0;
+    margin-bottom: 0;
+}

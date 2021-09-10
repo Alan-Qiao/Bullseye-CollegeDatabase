@@ -1,0 +1,47 @@
+{% extends "layout.html" %}
+
+{% block main %}
+    <form action="/" method="POST">
+        <select class="form-control" name="group" onchange="this.form.submit()">
+            <option value="All" {% if 'All' == cur_select %}selected{% endif %}>Top 100 Most Popular Schools</option>
+            <option value="Ivy League" {% if 'Ivy League' == cur_select %}selected{% endif %}>Ivy League</option>
+            <option value="Top 50" {% if 'Top 50' == cur_select %}selected{% endif %}>USNews Top 50</option>
+            <option value="Public" {% if 'Public' == cur_select %}selected{% endif %}>Public</option>
+            <option value="Private" {% if 'Private' == cur_select %}selected{% endif %}>Private</option>
+            <option value="Liberal Arts" {% if 'Liberal Arts' == cur_select %}selected{% endif %}>Liberal Arts</option>
+        </select>
+    </form>
+    <br>
+    <table class="table table-striped text-left">
+        <thead>
+            <tr>
+                <th style="width:15%">Name</th>
+                <th>Location</th>
+                <th>Ownership</th>
+                <th>Admission Rate</th>
+                <th>Application Deadline</th>
+                <th>Full Cost</th>
+                <th>Aid</th>
+                <th>Class Population</th>
+                <th style="width:18%">SAT/ACT</th>
+                <th>Living on Campus(%)</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for college in college_list %}
+                <tr>
+                    <td ><a href="/college/{{ college.name }}">{{college.name}}</a></td>
+                    <td>{{ college.location }}</td>
+                    <td>{{ college.inst_type }}</td>
+                    <td class="text-nowrap">{% autoescape false %} {{ college.adm_rate | replace("\n", "<br/>") }} {% endautoescape %}</td>
+                    <td>{% autoescape false %} {{ college.appl_dl | replace("\n", "<br/>") }} {% endautoescape %}</td>
+                    <td>{{ college.full_cost['Cost of Attendance'] }}</td>
+                    <td>{{ college.has_aid }}</td>
+                    <td>{{ college.class_population }}</td>
+                    <td>{{ college.stand_test['SAT or ACT'] }}</td>
+                    <td>{{ college.res_pct }}</td>
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+{% endblock %}
