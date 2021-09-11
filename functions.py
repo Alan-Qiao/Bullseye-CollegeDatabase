@@ -37,12 +37,20 @@ def main():
 
 
 def add_college(college_name):
+    """
+    Create a new College Object and add it to list of colleges
+    :param str college_name: Name of College
+    """
     global college_list
     clg = college_access[college_name]
     college_list[college_name] = College(clg['name'], clg['csc_name'], clg['nch_name'], clg['cpx_name'], clg['cdt_name'])
 
 
 def csc_grab(college_name):
+    """
+    Scrap College Info from CollegeScoreCard
+    :param str college_name: Name of College
+    """
     global college_list
     url = 'https://api.data.gov/ed/collegescorecard/v1/schools.json'
     payload = {
@@ -103,6 +111,10 @@ def nch_grab(college_name):
 
 
 def cpx_grab(college_name):
+    """
+    Scrape College Information from Cappex
+    :param str college_name: Name of College
+    """
     global college_list
     url = 'https://www.cappex.com/colleges/'+college_list[college_name].cpx+'/'
 
@@ -126,8 +138,12 @@ def cpx_grab(college_name):
 
 
 def cdt_grab(college_name):
+    """
+    Scrape College Information from CollegeData
+    :param str college_name: Name of College
+    """
     global college_list
-    url = 'https://www.collegedata.com/college/'+college_list[college_name].cdt
+    url = 'https://www.collegedata.com/college-search/'+college_list[college_name].cdt
 
     tree = get_page(url)
     college_list[college_name].full_cost = {tree.xpath('//*[@id="app-container"]/div/div/div[2]/div[1]/div/div[2]/div[2]/div[3]/div/div[position()<4]//div[@class="TitleValue_title__2-afK"]/text()')[x]:
@@ -165,6 +181,12 @@ def cdt_grab(college_name):
 
 
 def get_page(src, suffix=''):
+    """
+    Return HTML requested web page
+    :param str src: Main URL of site
+    :param str suffix: Additional parameters or page specifiers
+    :return: HTML of site
+    """
     page = requests.get(src+suffix, headers={'User-Agent': 'Mozilla/5.0'})
     if not page.ok:
         print(page.status_code)
@@ -174,6 +196,13 @@ def get_page(src, suffix=''):
 
 
 def csv_read(opt):
+    """
+    Read CSV files to global variables. Reads from 3 predefined options.
+    1. Read Data of Colleges from saved csv
+    2. Read Data of majors from saved csv
+    3. Read list of Colleges to be considered from csv
+    :param int opt: csv file option
+    """
     global college_access, college_list
     if opt == 1:
         fieldnames = ['name', 'csc', 'nch', 'cpx', 'cdt', 'location', 'inst_type', 'locale', 'prog_len', 'weather',
@@ -216,6 +245,12 @@ def csv_read(opt):
 
 
 def csv_write(opt):
+    """
+    Write college or major data to csv file. Two predefined options.
+    1. Write College Data to file
+    2. Write Major Data to file
+    :param int opt: csv file option
+    """
     global college_list
     if opt == 1:
         fieldnames = ['Name', 'csc', 'nch', 'cpx', 'cdt', 'Location', 'Institution Type', 'Locale', 'Program Length',
@@ -247,12 +282,22 @@ def csv_write(opt):
 
 
 def load_obj(filename):
+    """
+    Return object loaded from pickle file
+    :param str filename: path to pickle file
+    :return: Loaded Object
+    """
     with open(filename, 'rb') as file:
         obj = pickle.load(file)
     return obj
 
 
 def save_obj(obj, filename):
+    """
+    Write object to pickle file
+    :param obj: object to be written
+    :param filename: path of destination pickle file
+    """
     with open(filename, 'wb') as output:
         pickle.dump(obj, output, 4)
 
