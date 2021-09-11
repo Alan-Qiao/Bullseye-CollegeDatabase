@@ -14,13 +14,13 @@ college_access = {}
 
 def main():
     global college_list, college_access
-    '''
+    # '''
     csv_read(3)
     for coll in college_access:
         add_college(coll)
-    '''
+    # '''
     # college_list = load_obj(Path('college/college_list.pickle'))
-    '''
+    # '''
     for school in college_list:
         csc_grab(school)
         cpx_grab(school)
@@ -33,7 +33,7 @@ def main():
     print('Data for Colleges Saved to CSV')
     csv_write(2)
     print('Data for Majors Saved to CSV')
-    '''
+    # '''
 
 
 def add_college(college_name):
@@ -72,7 +72,7 @@ def csc_grab(college_name):
             'latest.student.demographics.race_ethnicity.unknown', 'latest.student.demographics.race_ethnicity.asian_pacific_islander',
             'latest.student.share_lowincome', 'latest.student.share_middleincome', 'latest.student.share_highincome',
             'latest.programs.cip_4_digit.title', 'latest.programs.cip_4_digit.credential.level',
-            'latest.programs.cip_4_digit.debt.mean_debt', 'latest.earnings.6_yrs_after_entry.working_not_enrolled.mean_earnings'
+            'latest.programs.cip_4_digit.debt.parent_plus.all.eval_inst.average', 'latest.earnings.6_yrs_after_entry.working_not_enrolled.mean_earnings'
         ])
     }
     resp = requests.get(url, params=payload).json()
@@ -119,13 +119,13 @@ def cpx_grab(college_name):
     url = 'https://www.cappex.com/colleges/'+college_list[college_name].cpx+'/'
 
     tree = get_page(url, 'academics')
-    college_list[college_name].stu_to_fac = str(tree.xpath('//*[@id="block-fingerprint-content"]/div/article/div[2]/div/div[2]/section[1]/div[3]/div[1]/div[2]/text()')[0])
+    college_list[college_name].set_stu_to_fac(tree.xpath('//*[@id="block-fingerprint-content"]/div/article/div[2]/div/div[2]/section[1]/div[3]/div[1]/div[2]/text()'))
 
     tree = get_page(url, 'admissions')
-    college_list[college_name].set_sat_mid_range(*tree.xpath('//*[@id="block-fingerprint-content"]/div/article/div[2]/div/div[2]/section[4]/div[3]/div/div[1]//div[@class="bar-bg-big-percentage"]/*[@class]/text()'))
+    college_list[college_name].set_sat_mid_range(*tree.xpath('//*[@id="block-fingerprint-content"]/div/article/div[2]/div/div[2]/section[5]/div[3]/div/div//div[@class="bar-bg-big-percentage"]/div[@class]/text()'))
     college_list[college_name].set_stand_test_sub(next(iter(tree.xpath('//*[@id="block-fingerprint-content"]/div/article/div[2]/div/div[2]/section[4]/div[2]/div[2]/div/div[1]/div/text()')), None),
                                                   next(iter(tree.xpath('//*[@id="block-fingerprint-content"]/div/article/div[2]/div/div[2]/section[4]/div[2]/div[1]/div/div[1]/div/text()')), None))
-    college_list[college_name].fin_on_adm = tree.xpath('//*[@id="block-fingerprint-content"]/div/article/div[2]/div/div[2]/section[1]/div[1]/div[1]/h3/text()')[0][1:-1]
+    college_list[college_name].fin_on_adm = tree.xpath('//*[@id="block-fingerprint-content"]/div/article/div[2]/div/div[2]/section[2]/div[1]/div[1]/h3/text()')[0][1:-1]
     college_list[college_name].set_appl_dl(tree.xpath('//*[@id="block-fingerprint-content"]/div/article/div[2]/div/div[2]/section[4]/div[1]/table/tbody/tr/td/text()'))
 
     tree = get_page(url, 'campus-life')
@@ -133,7 +133,7 @@ def cpx_grab(college_name):
                                                 tree.xpath('//*[@id="block-fingerprint-content"]/div/article/div[2]/div/div[2]/section[3]/div[2]/div[2]/div[2]/div[2]/ul/*/text()'))
 
     tree = get_page(url, 'after-graduation')
-    college_list[college_name].outcomes = tree.xpath('//*[@id="block-fingerprint-content"]/div/article/div[2]/div/div[2]/section/div[1]/div[2]/div[3]/div/text()')[0]+' Employed 6 Months After Graduation'
+    college_list[college_name].set_outcomes(tree.xpath('//*[@id="block-fingerprint-content"]/div/article/div[2]/div/div[2]/section/div[1]/div[2]/div[text()="Employed"]/following-sibling::div[2]/div/text()'))
     college_list[college_name].top_employers = ', '.join(tree.xpath('//*[@id="block-fingerprint-content"]/div/article/div[2]/div/div[2]/section/div[2]/div[2]/div[2]/div/*/text()'))
     college_list[college_name].top_sectors = ', '.join(tree.xpath('//*[@id="block-fingerprint-content"]/div/article/div[2]/div/div[2]/section/div[2]/div[3]/div[2]/div/*/text()'))
 
@@ -151,32 +151,33 @@ def cdt_grab(college_name):
                                             ', '.join(tree.xpath('//*[@id="app-container"]/div/div/div[2]/div[1]/div/div[2]/div[2]/div[3]/div[position()='+str(x+1)+']//div[@class="TitleValue_value__1JT0d"]/text()'))
                                             for x in range(3)}
     tree = get_page(url, '/campus-life')
-    college_list[college_name].set_weather(tree.xpath('//*[@id="app-container"]/div/div/div[2]/div[1]/div/div[1]/div/div[3]/div/div[5]/div/div[2]/text()')[0],
-                                           tree.xpath('//*[@id="app-container"]/div/div/div[2]/div[1]/div/div[1]/div/div[3]/div/div[6]/div/div[2]/text()')[0],
-                                           tree.xpath('//*[@id="app-container"]/div/div/div[2]/div[1]/div/div[1]/div/div[3]/div/div[7]/div/div[2]/text()')[0])
+    college_list[college_name].set_weather(tree.xpath('//*[@id="app-container"]/div/div/div[2]/div[1]/div/div[1]/div/div[3]/div/div/div/div[text()="Avg Low In Jan"]/following-sibling::div/text()')[0],
+                                           tree.xpath('//*[@id="app-container"]/div/div/div[2]/div[1]/div/div[1]/div/div[3]/div/div/div/div[text()="Avg High In Sep"]/following-sibling::div/text()')[0],
+                                           tree.xpath('//*[@id="app-container"]/div/div/div[2]/div[1]/div/div[1]/div/div[3]/div/div/div/div[text()="Rainy Days / Year"]/following-sibling::div/text()')[0])
     college_list[college_name].res_pct = tree.xpath('//*[@id="app-container"]/div/div/div[2]/div[1]/div/div[2]/div[2]/div[3]/div/div[3]/div/div[2]/text()')[0]
-    college_list[college_name].res_rqd = tree.xpath('//*[@id="app-container"]/div/div/div[2]/div[1]/div/div[2]/div[2]/div[3]/div/div[4]/div/div[2]/text()')[0].replace('\xa0', 'NA')
+    college_list[college_name].set_res_rqd(tree.xpath('//*[@id="app-container"]/div/div/div[2]/div[1]/div/div[2]/div[2]/div[3]/div/div/div/div[text()="Housing Requirements"]/following-sibling::div/text()'))
     college_list[college_name].personal_care = {tree.xpath('//*[@id="app-container"]/div/div/div[2]/div[1]/div/div[4]/div[2]/div[3]/div//div[@class="TitleValue_title__2-afK"]/text()')[x]:
                                                 tree.xpath('//*[@id="app-container"]/div/div/div[2]/div[1]/div/div[4]/div[2]/div[3]/div//div[@class="TitleValue_value__1JT0d"]/text()')[x]
-                                                for x in range(len(tree.xpath('//*[@id="app-container"]/div/div/div[2]/div[1]/div/div[4]/div[2]/div[3]/div/div/[@class="TitleValue_title__2-afK"]/text()')))}
+                                                for x in range(len(tree.xpath('//*[@id="app-container"]/div/div/div[2]/div[1]/div/div[4]/div[2]/div[3]/div//div[@class="TitleValue_title__2-afK"]/text()')))}
 
     tree = get_page(url, '/money-matters')
     college_list[college_name].full_cost.update({tree.xpath('//*[@id="app-container"]/div/div/div[1]/div[3]/div/div/div/div[5]/div[position()>2]//div[@class="StatLine_label__1Kxkv"]/text()')[x]:
                                                  tree.xpath('//*[@id="app-container"]/div/div/div[1]/div[3]/div/div/div/div[5]/div[position()>2]//div[@class="StatLine_value__1ASq0"]/text()')[x]
                                                  for x in range(2)})
-    college_list[college_name].set_aid(tree.xpath('//*[@id="app-container"]/div/div/div[2]/div[1]/div/div[3]/div[2]/div[3]/div/div/div/child::text()'))
+    college_list[college_name].set_aid(tree.xpath('//*[@id="app-container"]/div/div/div[2]/div[1]/div/div[3]/div[2]/div[3]/div/div/div//*[text()]'))
 
     tree = get_page(url, '/admission')
-    college_list[college_name].set_adm_stats(tree.xpath('//*[@id="app-container"]/div/div/div[2]/div[1]/div/div[4]/div[2]/div[3]/div/div/div/child::text()/text()'))
-    college_list[college_name].interview = tree.xpath('//*[@id="app-container"]/div/div/div[2]/div[1]/div/div[2]/div[2]/div[3]/div/div[19]/div/div[2]/text()')[0]
-    college_list[college_name].set_stand_test(tree.xpath('//*[@id="app-container"]/div/div/div[2]/div[1]/div/div[1]/div/div[3]/div/div[5]/div/table/tbody/tr/td[2]/text()'))
-    college_list[college_name].act_mid_range = tree.xpath('//*[@id="app-container"]/div/div/div[2]/div[1]/div/div[4]/div[2]/div[3]/div/div[9]/div/div[1]/text()')[0].split()[2]
+    college_list[college_name].set_adm_stats(tree.xpath('//*[@id="app-container"]/div/div/div[2]/div[1]/div/div[4]/div[2]/div[3]/div/div[1]/div/div[2]/text()')[0],
+                                             tree.xpath('//*[@id="app-container"]/div/div/div[2]/div[1]/div/div[4]/div[2]/div[3]/div/div[2]/div/div[2]/text()')[0])
+    college_list[college_name].interview = tree.xpath('//*[@id="app-container"]/div/div/div[2]/div[1]/div/div[2]/div[2]/div[3]/div/div/div/div[text()="Interview"]/following-sibling::div/text()')[0]
+    college_list[college_name].set_stand_test(tree.xpath('//*[@id="app-container"]/div/div/div[2]/div[1]/div/div[1]/div/div[3]/div/div/div/table/tbody/tr/td[text()="SAT or ACT"]/../../tr/td[2]/text()'))
+    college_list[college_name].set_act_mid_range(tree.xpath('//*[@id="app-container"]/div/div/div[2]/div[1]/div/div[4]/div[2]/div[3]/div/div//h6[contains(text(), "ACT Scores")]/../../following-sibling::div[1]/div/div[1]/text()')[0])
 
     tree = get_page(url, '/academics')
     college_list[college_name].spec_prog = tree.xpath('//*[@id="app-container"]/div[1]/div/div[2]/div[1]/div/div[1]/div/div[3]/div/div[4]/div/text()')[1:]
     college_list[college_name].acad_supp = {tree.xpath('//*[@id="app-container"]/div[1]/div/div[2]/div[1]/div/div[6]/div[2]/div[3]/div/div/div/div[@class="TitleValue_title__2-afk"/text()')[x]:
                                             tree.xpath('//*[@id="app-container"]/div[1]/div/div[2]/div[1]/div/div[6]/div[2]/div[3]/div/div/div/div[@class="TitleValue_value__1JT0d"/text()')[x]
-                                            for x in range(len(tree.xpath('//*[@id="app-container"]/div[1]/div/div[2]/div[1]/div/div[6]/div[2]/div[3]/div/div/div/div[@class="TitleValue_title__2-afk"/text()')))}
+                                            for x in range(len(tree.xpath('//*[@id="app-container"]/div[1]/div/div[2]/div[1]/div/div[6]/div[2]/div[3]/div/div/div/div[@class="TitleValue_title__2-afk"]/text()')))}
 
 
 def get_page(src, suffix=''):
@@ -283,7 +284,7 @@ def csv_write(opt):
 def load_obj(filename):
     """
     Return object loaded from pickle file
-    :param str filename: path to pickle file
+    :param Path filename: path to pickle file
     :return: Loaded Object
     """
     with open(filename, 'rb') as file:
@@ -295,7 +296,7 @@ def save_obj(obj, filename):
     """
     Write object to pickle file
     :param obj: object to be written
-    :param filename: path of destination pickle file
+    :param Path filename: path of destination pickle file
     """
     with open(filename, 'wb') as output:
         pickle.dump(obj, output, 4)

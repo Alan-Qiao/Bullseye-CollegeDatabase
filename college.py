@@ -24,7 +24,7 @@ class College:
         self.avg_cost = avg_cost  # 11 average cost of attendance (Financial Aid adjusted)
         self.ac_to_inc = ac_to_inc  # 12 Average Cost by Income Group
         self.aid = aid  # 13  # Merit, Grant, Loan Aid
-        self.has_aid = has_aid # Whether school offers Aid
+        self.has_aid = has_aid  # Whether school offers Aid
         self.med_post_grad_debt = med_post_grad_debt  # 14 Median Post Graduation Debt
 
         self.adm_rate = adm_rate  # 15  # Admission Rate, includes breakdown
@@ -102,6 +102,16 @@ class College:
         """
         self.weather = low + " average low in Jan, " + high + " average high in Sept, " + rain + " rainy days per year"
 
+    def set_res_rqd(self, rqd):
+        """
+        Set Housing Requirements
+        :param str rqd: List containing housing requirement strings
+        """
+        if len(rqd) < 1:
+            self.res_rqd = "Not Reported"
+        else:
+            self.res_rqd = rqd[0]
+
     def set_aid(self, nodes):
         """
         Reformat element tree of aid elements from CollegeData to python list
@@ -129,10 +139,11 @@ class College:
             aid['Loans']['Other Loans'] = 'None'
         self.aid = aid
 
-    def set_adm_stats(self, stats):
+    def set_adm_stats(self, adm, pop):
         """
         Update admissions statistics with scraped information from CollegeData
-        :param stats: list of scraped information
+        :param adm: Overall Admission Rate Info
+        :param pop: Students Enrolled Info
         """
         '''
         rates = ['Overall: ' + stats[0].split()[0]]
@@ -147,21 +158,32 @@ class College:
             else:
                 rates.append('EA: ' + stats[7].split()[0])
         '''
-        self.adm_rate = stats[1].split()[0] if stats[1] != 'Not reported' else 'Not reported'
-        self.tot_appl = stats[1].split()[2] if stats[1] != 'Not reported' else 'Not reported'
-        self.tot_adm = int(self.tot_appl * (float(self.adm_rate[:-1])/100.))
-        self.class_population = stats[3].split()[0] if stats[3] != 'Not reported' else 'Not reported'
+        self.adm_rate = adm.split()[0] if adm != 'Not reported' else 'Not reported'
+        self.tot_appl = adm.split()[2] if adm != 'Not reported' else 'Not reported'
+        self.tot_adm = int(float(self.tot_appl.replace(',', '')) * (float(self.adm_rate[:-1])/100.))
+        self.class_population = pop.split()[0] if pop != 'Not reported' else 'Not reported'
+
+    def set_stu_to_fac(self, ratio):
+        """
+        Set the student to faculty ratio
+        :param ratio: list containing student faculty ratio
+        """
+        if len(ratio) < 1:
+            self.stu_to_fac = "Not Reported"
+        else:
+            self.stu_to_fac = str(ratio[0])
 
     def set_stand_test(self, policy):
         """
         Update Standardized Testing Policy
         :param policy: List of strings of standardized testing policies
         """
-        if policy[0] == '\xa0':
-            policy[0] = policy[1]
-        if policy[2] == '\xa0':
-            policy[2] = policy[1]
-        self.stand_test = {'SAT or ACT': policy[0]+', '+policy[3].lower(), 'SAT Subject Test': policy[2]}
+        if len(policy) == 4:
+            self.stand_test = {'SAT or ACT': policy[0]+', '+policy[3].lower(), 'SAT Subject Test': policy[2]}
+        elif len(policy) == 3:
+            self.stand_test = {'SAT or ACT': policy[0]+', '+policy[2].lower(), 'SAT Subject Test': policy[1]}
+        else:
+            self.stand_test = {'SAT or ACT': 'Not Reported', 'SAT Subject Test': 'Not Reported'}
 
     def set_sat_mid_range(self, math25=0, math75=0, engl25=0, engl75=0):
         """
@@ -170,11 +192,23 @@ class College:
         :param math75: math third percentile score.
         :param engl25: english first percentile score.
         :param engl75: english third percentile score.
-        :return:
         """
         low = int(math25) + int(engl25)
         high = int(math75) + int(engl75)
         self.sat_mid_range = str(low)+'-'+str(high)
+
+    def set_act_mid_range(self, score):
+        """
+        Set ACT score range
+        :param score: String containing ACT score summary
+        """
+        if score != "Not Reported":
+            score = score.split()
+            if score[1] == "average,":
+                score = score[2]
+            else:
+                score = score[0]
+        self.act_mid_range = score
 
     def set_stand_test_sub(self, sat_pct, act_pct):
         """
@@ -193,9 +227,8 @@ class College:
         :param dl: List of Deadlines
         """
         deadlines = []
-        for i in range(len(dl)):
+        for i in range(len(dl), 2):
             deadlines.append(dl[i] + ': ' + dl[i+1])
-            i += 1
         self.appl_dl = '\n'.join(deadlines)
 
     def set_gender_pct(self, m_dec, f_dec):
@@ -259,7 +292,7 @@ class College:
         for maj in data:
             if not maj.get('credential').get('level') == 3:
                 continue
-            mean_debt = maj.get('debt').get('mean_debt')
+            mean_debt = maj.get('debt').get('parent_plus').get('all').get('eval_inst').get('average')
             self.majors.append(Major(school=self.name, name=maj.get('title'), mean_debt=mean_debt))
 
     def set_sports_teams(self, men, women):
@@ -269,6 +302,16 @@ class College:
         :param women: list of women sports
         """
         self.sports_teams = {"Men's Sports": ', '.join(men), "Women's Sports": ', '.join(women)}
+
+    def set_outcomes(self, outcome):
+        """
+        Set employment outcome 6 month after graduation
+        :param outcome: list containing percentage employed string
+        """
+        if len(outcome) < 1:
+            self.outcomes = 'Not Reported'
+        else:
+            self.outcomes = outcome[0] + ' employed 6 months after graduation'
 
     def set_has_aid(self):
         """
@@ -292,7 +335,7 @@ class College:
         Unimplemented/Depricated attributes are dropped.
         :return: list of college attributes
         """
-        row = [vars(self)[x] for x in vars(self) if x != 'majors']
+        row = [vars(self)[x] for x in vars(self) if x != 'majors' and x != 'has_aid']
         row[41] = '\n'.join([x+': '+y for x, y in row[41].items()])
         row[10] = '\n'.join([x+': '+y for x, y in row[10].items()])
         row[35] = '\n'.join([x+': '+y for x, y in row[35].items()])
