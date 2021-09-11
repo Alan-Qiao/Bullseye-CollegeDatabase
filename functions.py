@@ -126,6 +126,7 @@ def cpx_grab(college_name):
     college_list[college_name].set_stand_test_sub(next(iter(tree.xpath('//*[@id="block-fingerprint-content"]/div/article/div[2]/div/div[2]/section[4]/div[2]/div[2]/div/div[1]/div/text()')), None),
                                                   next(iter(tree.xpath('//*[@id="block-fingerprint-content"]/div/article/div[2]/div/div[2]/section[4]/div[2]/div[1]/div/div[1]/div/text()')), None))
     college_list[college_name].fin_on_adm = tree.xpath('//*[@id="block-fingerprint-content"]/div/article/div[2]/div/div[2]/section[1]/div[1]/div[1]/h3/text()')[0][1:-1]
+    college_list[college_name].set_appl_dl(tree.xpath('//*[@id="block-fingerprint-content"]/div/article/div[2]/div/div[2]/section[4]/div[1]/table/tbody/tr/td/text()'))
 
     tree = get_page(url, 'campus-life')
     college_list[college_name].set_sports_teams(tree.xpath('//*[@id="block-fingerprint-content"]/div/article/div[2]/div/div[2]/section[3]/div[2]/div[2]/div[1]/div[2]/ul/*/text()'),
@@ -165,19 +166,17 @@ def cdt_grab(college_name):
                                                  for x in range(2)})
     college_list[college_name].set_aid(tree.xpath('//*[@id="app-container"]/div/div/div[2]/div[1]/div/div[3]/div[2]/div[3]/div/div/div/child::text()'))
 
-    tree = get_page(url, '?tab=profile-admission-tab')
+    tree = get_page(url, '/admission')
     college_list[college_name].set_adm_stats(tree.xpath('//*[@id="app-container"]/div/div/div[2]/div[1]/div/div[4]/div[2]/div[3]/div/div/div/child::text()/text()'))
-    college_list[college_name].interview = tree.xpath('//*[@id="profile-admission"]/div[2]/div/dl[5]/dd[1]/text()')[0]
-    college_list[college_name].set_stand_test(tree.xpath('//*[@id="profile-admission"]/div[1]/div/table[2]/tbody/tr/td[2]/text()'))
-    college_list[college_name].act_mid_range = tree.xpath('//*[@id="profile-admission"]/div[4]/div/dl[4]/dd[1]/text()[last()]')[0].split()[0]
-    college_list[college_name].set_appl_dl(tree.xpath('//*[@id="profile-admission"]/div[2]/div/dl[2]/dd[1]/text()')[0],
-                                           tree.xpath('//*[@id="profile-admission"]/div[2]/div/dl[3]/dd/text()'))
+    college_list[college_name].interview = tree.xpath('//*[@id="app-container"]/div/div/div[2]/div[1]/div/div[2]/div[2]/div[3]/div/div[19]/div/div[2]/text()')[0]
+    college_list[college_name].set_stand_test(tree.xpath('//*[@id="app-container"]/div/div/div[2]/div[1]/div/div[1]/div/div[3]/div/div[5]/div/table/tbody/tr/td[2]/text()'))
+    college_list[college_name].act_mid_range = tree.xpath('//*[@id="app-container"]/div/div/div[2]/div[1]/div/div[4]/div[2]/div[3]/div/div[9]/div/div[1]/text()')[0].split()[2]
 
-    tree = get_page(url, '?tab=profile-academics-tab')
-    college_list[college_name].spec_prog = tree.xpath('//*[@id="profile-academics"]/div[2]/div/dl/dd[3]/text()')[0]
-    college_list[college_name].acad_supp = {tree.xpath('//*[@id="profile-academics"]/div[7]/div/dl/dt/text()')[x]:
-                                            tree.xpath('//*[@id="profile-academics"]/div[7]/div/dl/dd/text()')[x]
-                                            for x in range(len(tree.xpath('//*[@id="profile-academics"]/div[7]/div/dl/dt/text()')))}
+    tree = get_page(url, '/academics')
+    college_list[college_name].spec_prog = tree.xpath('//*[@id="app-container"]/div[1]/div/div[2]/div[1]/div/div[1]/div/div[3]/div/div[4]/div/text()')[1:]
+    college_list[college_name].acad_supp = {tree.xpath('//*[@id="app-container"]/div[1]/div/div[2]/div[1]/div/div[6]/div[2]/div[3]/div/div/div/div[@class="TitleValue_title__2-afk"/text()')[x]:
+                                            tree.xpath('//*[@id="app-container"]/div[1]/div/div[2]/div[1]/div/div[6]/div[2]/div[3]/div/div/div/div[@class="TitleValue_value__1JT0d"/text()')[x]
+                                            for x in range(len(tree.xpath('//*[@id="app-container"]/div[1]/div/div[2]/div[1]/div/div[6]/div[2]/div[3]/div/div/div/div[@class="TitleValue_title__2-afk"/text()')))}
 
 
 def get_page(src, suffix=''):

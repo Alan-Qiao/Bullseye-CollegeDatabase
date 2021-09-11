@@ -158,10 +158,10 @@ class College:
         :param policy: List of strings of standardized testing policies
         """
         if policy[0] == '\xa0':
-            policy[0] = policy[3]
-        if policy[4] == '\xa0':
-            policy[4] = policy[3]
-        self.stand_test = {'SAT or ACT': policy[0]+', '+policy[5].lower(), 'SAT Subject Test': policy[4]}
+            policy[0] = policy[1]
+        if policy[2] == '\xa0':
+            policy[2] = policy[1]
+        self.stand_test = {'SAT or ACT': policy[0]+', '+policy[3].lower(), 'SAT Subject Test': policy[2]}
 
     def set_sat_mid_range(self, math25=0, math75=0, engl25=0, engl75=0):
         """
@@ -187,17 +187,15 @@ class College:
         sub_pct = ['Students Submitting SAT: '+sat_pct, 'Students Submitting ACT: '+act_pct]
         self.stand_test_sub = '\n'.join(sub_pct)
 
-    def set_appl_dl(self, rd, early):
+    def set_appl_dl(self, dl):
         """
         Set Application Deadlines of School
-        :param rd: Regular Decision Deadline
-        :param early: Early Action/Decision Deadlines
+        :param dl: List of Deadlines
         """
-        deadlines = ['RD: '+rd]
-        if early[0] == 'Yes':
-            deadlines.append('ED: '+early[1])
-        if early[3] == 'Yes':
-            deadlines.append('EA: '+early[4])
+        deadlines = []
+        for i in range(len(dl)):
+            deadlines.append(dl[i] + ': ' + dl[i+1])
+            i += 1
         self.appl_dl = '\n'.join(deadlines)
 
     def set_gender_pct(self, m_dec, f_dec):
